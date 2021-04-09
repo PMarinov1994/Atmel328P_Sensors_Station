@@ -7,7 +7,7 @@
 extern const Transition_Entry gTransitionEntries[] =
 {
     // IDLE -> MEASUR
-    { EVENT_EXIT_IDLE, STATE_IDLE, STATE_MEASURE, ReadSeonsorData },
+    { EVENT_EXIT_IDLE, STATE_IDLE, STATE_MEASURE, ReadSensorData },
 
     // MEASURE -> STATION POWER UP
     { EVENT_MEASURE_DONE, STATE_MEASURE, STATE_WAITING_POWER_UP_STATION, PowerUpStation },

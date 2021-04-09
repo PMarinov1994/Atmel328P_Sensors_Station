@@ -1,6 +1,7 @@
 #include "CapSoilSensor.h"
 #include "Arduino.h"
 #include "StationInfo.h"
+#include <GlobalDefines.h>
 
 CCapSoilSensor::CCapSoilSensor()
 {
@@ -46,6 +47,17 @@ unsigned short CCapSoilSensor::ReadSensorHumidity(int pin)
         sensorWetValue,
         0,
         100);
+
+    DEBUG_PRINT("VC: ");
+    DEBUG_PRINT(vccMv);
+    DEBUG_PRINT(" | Sensor: ");
+    DEBUG_PRINT(moistureMv);
+    DEBUG_PRINT(" | dry: ");
+    DEBUG_PRINT(sensorDryValue);
+    DEBUG_PRINT(" | wet: ");
+    DEBUG_PRINT(sensorWetValue);
+    DEBUG_PRINT(" | %: ");
+    DEBUG_PRINT_LN(moisture);
 
     return moisture;
 };

@@ -1,7 +1,7 @@
 #ifndef EVENT_HANDLERS__H
 #define EVENT_HANDLERS__H
 
-void ReadSeonsorData();
+void ReadSensorData();
 void PowerUpStation();
 void InitStationConfig();
 void ConnectToWifi();

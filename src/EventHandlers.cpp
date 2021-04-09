@@ -12,7 +12,7 @@
 unsigned short usA0_Value = 0;
 double dBatteryLevel = 0;
 
-void ReadSeonsorData()
+void ReadSensorData()
 {
     CCapSoilSensor cSensor;
     usA0_Value = cSensor.ReadSensorHumidity(MOISTURE_SENSOR_1_PIN);
@@ -20,7 +20,7 @@ void ReadSeonsorData()
     CStationInfo cStation;
     dBatteryLevel = (cStation.ReadSupplyVoltage() / 1000.0) + 0.005;
 
-    DEBUG_PRINT("ReadSeonsorData() -> A0: ");
+    DEBUG_PRINT("ReadSensorData() -> A0: ");
     DEBUG_PRINT(usA0_Value);
 
     DEBUG_PRINT(" | Battery: ");
@@ -44,13 +44,13 @@ void InitStationConfig()
 void ConnectToWifi()
 {
     DEBUG_PRINT("ConnectToWifi()");
-    gCommandParser.SendCommand(COMMAND_HANDLER_INIT_WIFI_ID, CMD_MQTT_INIT);
+    gCommandParser.SendCommand(COMMAND_HANDLER_INIT_WIFI_ID, CMD_WIFI_CONNECT_FROM_FILE);
 };
 
 void ConnectToMQTT()
 {
     DEBUG_PRINT("ConnectToMQTT()");
-    gCommandParser.SendCommand(COMMAND_HANDLER_INIT_MQTT_ID, CMD_MQTT_INIT);
+    gCommandParser.SendCommand(COMMAND_HANDLER_INIT_MQTT_ID, CMD_MQTT_INIT_FROM_FILE);
 };
 
 void PublishA0()
@@ -78,7 +78,7 @@ void PublishBatteryLevel()
     const char* args[] =
     {
         CMD_MQTT_PUBLISH_TOPIC_ARG,
-        MQTT_A0_TOPIC,
+        MQTT_BATTER_TOPIC,
         CMD_MQTT_PUBLISH_MESSAGE_ARG,
         strBatteryLevel.c_str()
     };
@@ -91,17 +91,17 @@ void PublishMeasureInterval()
 {
     DEBUG_PRINT("PublishMeasureInterval()");
 
-    String strBatteryLevel(dBatteryLevel);
+    String strMeasureInterval(STATION_MEASURE_INTERVAL_SECONDS);
     const char* args[] =
     {
         CMD_MQTT_PUBLISH_TOPIC_ARG,
-        MQTT_A0_TOPIC,
+        MQTT_MEASURE_INTERVAL_TOPIC,
         CMD_MQTT_PUBLISH_MESSAGE_ARG,
-        strBatteryLevel.c_str()
+        strMeasureInterval.c_str()
     };
 
     int size = sizeof(args) / sizeof(args[0]);
-    gCommandParser.SendCommand(COMMAND_HANDLER_PUBLISH_BATTER_ID, CMD_MQTT_PUBLISH, (char**)&args, size);
+    gCommandParser.SendCommand(COMMAND_HANDLER_PUBLISH_MEASURE_INTERVAL, CMD_MQTT_PUBLISH, (char**)&args, size);
 };
 
 void DisconnectMQTT()
@@ -127,15 +127,17 @@ void PowerDownStation()
 void EnterPowerSaveMode()
 {
     DEBUG_PRINT("PowerDownStation()");
+    digitalWrite(LED_BUILTIN, LOW);
 
     int sleep = STATION_MEASURE_INTERVAL_SECONDS / 8;
-    for (unsigned int i = 0; i < sleep; i++)
+    for (int i = 0; i < sleep; i++)
         LowPower.powerDown(SLEEP_8S, ADC_ON, BOD_ON);
 
     sleep = STATION_MEASURE_INTERVAL_SECONDS % 8;
-    for (unsigned int i = 0; i < sleep; i++)
+    for (int i = 0; i < sleep; i++)
         LowPower.powerDown(SLEEP_1S, ADC_ON, BOD_ON);
 
+    digitalWrite(LED_BUILTIN, HIGH);
     FireEvent(EVENT_POWER_SAVE_MODE_OVER);
 };
 

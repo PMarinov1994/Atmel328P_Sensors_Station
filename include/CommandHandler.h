@@ -9,9 +9,9 @@
 #define COMMAND_HANDLER_INIT_MQTT_ID                   3
 #define COMMAND_HANDLER_PUBLISH_A0_ID                  4
 #define COMMAND_HANDLER_PUBLISH_BATTER_ID              5
-#define COMMAND_HANDLER_PUBLISH_MEASURE_INTERVAL       7
-#define COMMAND_HANDLER_DISCONNECT_MQTT_ID             8
-#define COMMAND_HADNLER_DISCONNECT_WIFI_ID             9
+#define COMMAND_HANDLER_PUBLISH_MEASURE_INTERVAL       6
+#define COMMAND_HANDLER_DISCONNECT_MQTT_ID             7
+#define COMMAND_HADNLER_DISCONNECT_WIFI_ID             8
 
 void HandleCommand(tzCommandResponse * cmd);
 

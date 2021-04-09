@@ -68,8 +68,8 @@ void HandleCommand(tzCommandResponse *cmd)
 {
     switch (cmd->m_id)
     {
-    case COMMAND_HANDLER_POWER_UP_ID:
-        if (SUCCESS == cmd->m_result)
+    case INIT_DONE_ID:
+        if (INIT_DONE_RESULT == cmd->m_result)
         {
             ClearPowerUpError();
             FireEvent(EVENT_POWER_UP_STATION_SUCCESS);
@@ -149,7 +149,7 @@ void HandleCommand(tzCommandResponse *cmd)
     case COMMAND_HANDLER_PUBLISH_MEASURE_INTERVAL:
         if (SUCCESS == cmd->m_result)
         {
-            ClearPowerUpError();
+            ClearPublishError();
             FireEvent(EVENT_PUBLISH_MEASURE_INTERVAL_SUCCESS);
         }
         else
@@ -171,6 +171,10 @@ void HandleCommand(tzCommandResponse *cmd)
             FireEvent(EVENT_WIFI_DISCONNECT_SUCCESS);
         else
             FireEvent(EVENT_WIFI_DISCONNECT_FAIL);
+        break;
+
+    default:
+        DEBUG_PRINT_LN("Unknown command handler");
         break;
     }
 }

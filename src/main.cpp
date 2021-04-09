@@ -3,6 +3,7 @@
 #include <CommandParser.h>
 #include <CommandHandler.h>
 #include <StateMachine.h>
+#include <GlobalDefines.h>
 
 void setup()
 {
@@ -10,6 +11,7 @@ void setup()
     Serial.println("SETUP");
 
     pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
 }
 
 
@@ -24,6 +26,11 @@ void loop()
     {
         tzCommandResponse cmdResponse;
         gCommandParser.GetLastResponse(&cmdResponse);
+
+        DEBUG_PRINT("Got a result: ID: ");
+        DEBUG_PRINT(cmdResponse.m_id);
+        DEBUG_PRINT(" | result: ");
+        DEBUG_PRINT_LN(cmdResponse.m_result);
 
         HandleCommand(&cmdResponse);
     }

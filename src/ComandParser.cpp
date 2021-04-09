@@ -1,14 +1,12 @@
 #include <CommandParser.h>
 #include <Arduino.h>
 #include <CommDefinitions.h>
+#include <GlobalDefines.h>
 
 CComandParser gCommandParser;
 
 CComandParser::CComandParser()
-    : m_currState(SerialFetchState::eWait_Start)
-    , m_hasResponse(false)
-{
-};
+    : m_currState(SerialFetchState::eWait_Start), m_hasResponse(false){};
 
 CComandParser::~CComandParser(){};
 
@@ -33,9 +31,14 @@ void CComandParser::SendCommand(
     cmd += usCommand;
 
     for (int i = 0; i < argsLen; i++)
+    {
+        cmd += " ";
         cmd += args[i];
+    }
 
     cmd += MESSAGE_END;
+
+    Serial.println(cmd);
 }
 
 /*
@@ -51,11 +54,8 @@ bool CComandParser::IsResultAvailable()
 *   \brief
 *
 */
-void CComandParser::GetLastResult(tzCommandResponse* response)
+void CComandParser::GetLastResponse(tzCommandResponse *response)
 {
-    if (m_hasResponse)
-        return;
-
     memcpy(response, &m_response, sizeof(tzCommandResponse));
     m_hasResponse = false;
 }
@@ -71,6 +71,14 @@ void CComandParser::ParseCommandResult(const char *pCommandResult, unsigned shor
 {
     String cmd(pCommandResult);
     int separator = cmd.indexOf(COMMAND_ID_SEPARATOR);
+    if (-1 == separator)
+    {
+        DEBUG_PRINT_LN("No CMD/ID Separator found");
+
+        *pusId = 0xFF;
+        *pResult = ERROR_UNKNOWN_CMD;
+        return;
+    }
 
     String id = cmd.substring(0, separator);
     String result = cmd.substring(separator + 1);
@@ -107,20 +115,20 @@ void CComandParser::FetchCommandResult()
 
         break;
 
-        case SerialFetchState::eParse:
+    case SerialFetchState::eParse:
 
-            unsigned short id;
-            int cmdResult;
+        unsigned short id;
+        int cmdResult;
 
-            ParseCommandResult(m_serailBuffer.c_str(), &id, &cmdResult);
+        ParseCommandResult(m_serailBuffer.c_str(), &id, &cmdResult);
 
-            m_response.m_id = id;
-            m_response.m_result = cmdResult;
+        m_response.m_id = id;
+        m_response.m_result = cmdResult;
 
-            m_hasResponse = true;
-            m_serailBuffer = String();
+        m_hasResponse = true;
+        m_serailBuffer = String();
 
-            m_currState = SerialFetchState::eWait_Start;
+        m_currState = SerialFetchState::eWait_Start;
         break;
     }
 }
