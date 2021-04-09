@@ -1,57 +1,83 @@
 #ifndef STATE_MACHINE__H
 #define STATE_MACHINE__H
 
-class CStateMachine
+enum eState
 {
-public:
-    CStateMachine();
-    ~CStateMachine();
+    // FIRST
+    STATE_IDLE,
 
-private:
-    enum State
-    {
-        // FIRST
-        ENTRY,
+    // GET DATA
+    STATE_MEASURE,
 
-        // GET DATA
-        MEASURE_VALUE_A0,
+    // INIT
+    STATE_WAITING_POWER_UP_STATION,
+    STATE_WAITING_INIT_STATION_CONFIG,
+    STATE_WAITING_CONNECT_STATION_WIFI,
+    STATE_WAITING_CONNECT_STATION_MQTT,
 
-        // INIT
-        POWER_UP_STATION,
-        WAIT_POWER_UP_STATION,
-        CONNECT_STATION_WIFI,
-        WAIT_CONNECT_STATION_WIFI,
-        CONNECT_STATION_MQTT,
-        WAIT_CONNECT_STATION_MQTT,
-        
-        // SEND DATA
-        PUBLISH_SENSOR_DATA_A0,
-        WAIT_PUBLISH_SENSOR_DATA_A0,
-        PUBLISH_BATTERY_LEVEL,
-        WAIT_PUBLISH_BATTERY_LEVEL,
+    // SEND DATA
+    STATE_WAITING_PUBLISH_SENSOR_DATA_A0,
+    STATE_WAITING_PUBLISH_BATTERY_LEVEL,
+    STATE_WAITING_PUBLISH_MEASURE_INTERVAL,
 
-        // CLEAN UP
-        DISCONNECT_MQTT,
-        WAIT_DISCONNECT_MQTT,
-        DISCONNECT_WIFI,
-        WAIT_DISCONNECT_WIFI,
-        POWER_DOWN_STATION,
+    // CLEAN UP
+    STATE_WAITING_DISCONNECT_MQTT,
+    STATE_WAITING_DISCONNECT_WIFI,
+    STATE_POWERING_DOWN_STATION,
 
-        // POWER SAVE
-        POWER_SAVE_MODE,
-    };
-
-    enum Event
-    {
-
-    };
-
-    struct Transition_Entry
-    {
-        State m_from;
-        State m_to;
-        void* m_action;
-    };
+    // POWER SAVE
+    STATE_POWER_SAVE_MODE,
 };
+
+typedef enum eState State;
+
+extern State gCurrentState;
+
+enum eEvent
+{
+    EVENT_EXIT_IDLE,
+
+    EVENT_MEASURE_DONE,
+
+    EVENT_POWER_UP_STATION_SUCCESS,
+    EVENT_POWER_UP_STATION_FAIL,
+
+    EVENT_INIT_STATION_CONFIG_SUCCESS,
+    EVENT_INIT_STATION_CONFIG_FAIL,
+
+    EVENT_WIFI_CONNECT_SUCCESS,
+    EVENT_WIFI_CONNECT_FAIL,
+
+    EVENT_MQTT_CONNECT_SUCCESS,
+    EVENT_MQTT_CONNECT_FAIL,
+
+    EVENT_PUBLISH_A0_SUCCESS,
+    EVENT_PUBLISH_A0_FAIL,
+    EVENT_PUBLISH_BATTERY_SUCCESS,
+    EVENT_PUBLISH_BATTER_FAIL,
+    EVENT_PUBLISH_MEASURE_INTERVAL_SUCCESS,
+    EVENT_PUBLISH_MEASURE_INTERVAL_FAIL,
+
+    EVENT_MQTT_DISCONNECT_SUCCESS,
+    EVENT_MQTT_DISCONNECT_FAIL,
+
+    EVENT_WIFI_DISCONNECT_SUCCESS,
+    EVENT_WIFI_DISCONNECT_FAIL,
+
+    EVENT_POWER_DOWN_STATION_DONE,
+    EVENT_POWER_SAVE_MODE_OVER,
+};
+
+typedef enum eEvent Event;
+
+typedef struct stTransition_Entry
+{
+    Event m_event;
+    State m_from;
+    State m_to;
+    void (*m_action)();
+} Transition_Entry;
+
+void FireEvent(Event event);
 
 #endif // !STATE_MACHINE__H

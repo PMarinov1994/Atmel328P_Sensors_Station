@@ -2,6 +2,8 @@
 #include <Arduino.h>
 #include <CommDefinitions.h>
 
+CComandParser gCommandParser;
+
 CComandParser::CComandParser()
     : m_currState(SerialFetchState::eWait_Start)
     , m_hasResponse(false)
@@ -21,7 +23,7 @@ CComandParser::~CComandParser(){};
 void CComandParser::SendCommand(
     unsigned short usId,
     unsigned short usCommand,
-    const char *args,
+    char **args,
     int argsLen)
 {
     String cmd;

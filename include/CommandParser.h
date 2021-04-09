@@ -3,16 +3,16 @@
 
 #include <Arduino.h>
 
+struct CommandResponse
+{
+    unsigned short m_id;
+    int m_result;
+};
+
+typedef struct CommandResponse tzCommandResponse;
+
 class CComandParser
 {
-
-// Type defs
-public:
-    struct tzCommandResponse
-    {
-        unsigned short m_id;
-        int m_result;
-    };
 
 // Methods
 public:
@@ -22,13 +22,13 @@ public:
     void SendCommand(
         unsigned short usId,
         unsigned short usCommand,
-        const char* args,
-        int argsLen);
+        char** args = 0,
+        int argsLen = 0);
 
     void FetchCommandResult();
     
     bool IsResultAvailable();
-    void GetLastResult(tzCommandResponse* response);
+    void GetLastResponse(tzCommandResponse* response);
 
 // Type defs
 private:
@@ -52,5 +52,7 @@ private:
     tzCommandResponse m_response;
     bool m_hasResponse;
 };
+
+extern CComandParser gCommandParser;
 
 #endif // !COMMAND_PARSER__H

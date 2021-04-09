@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include <LowPower.h>
 #include <CommDefinitions.h>
-
-int pin = A0;
+#include <CommandParser.h>
+#include <CommandHandler.h>
+#include <StateMachine.h>
 
 void setup()
 {
@@ -15,5 +15,18 @@ void setup()
 
 void loop()
 {
-    LowPower.powerDown(SLEEP_8S, ADC_ON, BOD_ON);
+    // Auto trigger the exit idle event.
+    if (STATE_IDLE == gCurrentState)
+        FireEvent(EVENT_EXIT_IDLE);
+
+    gCommandParser.FetchCommandResult();
+    if (gCommandParser.IsResultAvailable())
+    {
+        tzCommandResponse cmdResponse;
+        gCommandParser.GetLastResponse(&cmdResponse);
+
+        HandleCommand(&cmdResponse);
+    }
+
+    delay(20);
 }
