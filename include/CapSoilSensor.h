@@ -13,8 +13,8 @@
 class CCapSoilSensor
 {
 public:
-    CCapSoilSensor() {};
-    ~CCapSoilSensor() {};
+    CCapSoilSensor();
+    ~CCapSoilSensor();
 
     unsigned short ReadSensorHumidity(int pin);
 
