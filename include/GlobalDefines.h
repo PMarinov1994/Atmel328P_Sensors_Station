@@ -10,6 +10,7 @@
 #define LED_STATION_CONFIG_INIT_ERROR 6
 
 #define PIN_STATION_POWER 10
+#define PIN_STATION_CH_EN 11
 
 #define MOISTURE_SENSOR_1_PIN A0
 
@@ -26,6 +27,7 @@ const int arOutputPins[] =
     LED_PUBLISH_ERROR,
     LED_STATION_CONFIG_INIT_ERROR,
     PIN_STATION_POWER,
+    PIN_STATION_CH_EN,
 };
 
 #define MQTT_A0_TOPIC "Outside_Level_0/A0"

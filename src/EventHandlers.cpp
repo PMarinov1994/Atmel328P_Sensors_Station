@@ -32,6 +32,7 @@ void ReadSensorData()
 void PowerUpStation()
 {
     DEBUG_PRINT("PowerUpStation()");
+    digitalWrite(PIN_STATION_CH_EN, HIGH);
     digitalWrite(PIN_STATION_POWER, HIGH);
 };
 
@@ -119,6 +120,7 @@ void DisconnectWifi()
 void PowerDownStation()
 {
     DEBUG_PRINT("PowerDownStation()");
+    digitalWrite(PIN_STATION_CH_EN, LOW);
     digitalWrite(PIN_STATION_POWER, LOW);
 
     FireEvent(EVENT_POWER_DOWN_STATION_DONE);
