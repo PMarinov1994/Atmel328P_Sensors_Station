@@ -13,10 +13,11 @@ CCapSoilSensor::~CCapSoilSensor()
 
 unsigned short CCapSoilSensor::ReadSensorHumidity(int pin)
 {
+    DEBUG_PRINT_LN("ReadSensorHumidity");
+
     CStationInfo stationInfo;
     long vccMv = stationInfo.ReadSupplyVoltage();
-
-    int moistureMv = this->ReadSensor(pin);    
+    int moistureMv = this->ReadSensor(pin);
 
     // To find the sensort value in AIR we need to translate the value in AIR
     // measured at 3.3V (lowest sensor operation value) and at 5V (highest sensor operation value)
@@ -48,28 +49,17 @@ unsigned short CCapSoilSensor::ReadSensorHumidity(int pin)
         0,
         100);
 
-    DEBUG_PRINT("VC: ");
-    DEBUG_PRINT(vccMv);
-    DEBUG_PRINT(" | Sensor: ");
-    DEBUG_PRINT(moistureMv);
-    DEBUG_PRINT(" | dry: ");
-    DEBUG_PRINT(sensorDryValue);
-    DEBUG_PRINT(" | wet: ");
-    DEBUG_PRINT(sensorWetValue);
-    DEBUG_PRINT(" | %: ");
-    DEBUG_PRINT_LN(moisture);
-
     return moisture;
 };
 
 long CCapSoilSensor::ReadSensor(int pin)
 {
     // from 0000 to 0111 (7) are valid values.
-    if (pin < 0 || pin > 7)
+    if (pin < A0 || pin > A7)
         return 0;
 
     // 23.9.1   ADMUX – ADC Multiplexer Selection Register
-    ADMUX = _BV(REFS0) | (pin & 0x07); // AVcc with external capacitor at AREF pin
+    ADMUX = _BV(REFS0) | _BV(pin & 0x07); // AVcc with external capacitor at AREF pin
 
     delay(2);            // Wait for Vref to settle
     ADCSRA |= _BV(ADSC); // Start conversion

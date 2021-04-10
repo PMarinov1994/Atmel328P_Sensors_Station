@@ -12,9 +12,15 @@ void setup()
 
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
+
+    for (unsigned int i = 0; i < sizeof(arInputPins) / sizeof(arInputPins[0]); i++)
+        pinMode(arInputPins[i], INPUT);
+    
+    for (unsigned int i = 0; i < sizeof(arOutputPins) / sizeof(arOutputPins[0]); i++)
+        pinMode(arOutputPins[i], OUTPUT);
 }
 
-
+#include <CapSoilSensor.h>
 void loop()
 {
     // Auto trigger the exit idle event.
@@ -26,11 +32,6 @@ void loop()
     {
         tzCommandResponse cmdResponse;
         gCommandParser.GetLastResponse(&cmdResponse);
-
-        DEBUG_PRINT("Got a result: ID: ");
-        DEBUG_PRINT(cmdResponse.m_id);
-        DEBUG_PRINT(" | result: ");
-        DEBUG_PRINT_LN(cmdResponse.m_result);
 
         HandleCommand(&cmdResponse);
     }
