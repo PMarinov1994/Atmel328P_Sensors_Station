@@ -3,8 +3,11 @@
 
 enum eState
 {
-    // FIRST
+    // TEMP STATE AFTER POWER UP (just for transition)
     STATE_IDLE = 0,
+
+    // WAIT CAPASITIVE SENSORS TO CHARGE UP
+    STATE_CHARGING_CAPASITIVE_PROBES,
 
     // GET DATA
     STATE_MEASURE,
@@ -17,6 +20,7 @@ enum eState
 
     // SEND DATA
     STATE_WAITING_PUBLISH_SENSOR_DATA_A0,
+    STATE_WAITING_PUBLISH_SENSOR_DATA_A1,
     STATE_WAITING_PUBLISH_BATTERY_LEVEL,
     STATE_WAITING_PUBLISH_MEASURE_INTERVAL,
 
@@ -37,10 +41,11 @@ enum eEvent
 {
     EVENT_EXIT_IDLE,
 
+    EVENT_CHARGING_CAPASITIVE_PROBES_DONE,
+
     EVENT_MEASURE_DONE,
 
     EVENT_POWER_UP_STATION_SUCCESS,
-    EVENT_POWER_UP_STATION_FAIL,
     EVENT_POWER_UP_STATION_TIMED_OUT,
 
     EVENT_INIT_STATION_CONFIG_SUCCESS,
@@ -58,6 +63,10 @@ enum eEvent
     EVENT_PUBLISH_A0_SUCCESS,
     EVENT_PUBLISH_A0_FAIL,
     EVENT_PUBLISH_A0_TIMED_OUT,
+
+    EVENT_PUBLISH_A1_SUCCESS,
+    EVENT_PUBLISH_A1_FAIL,
+    EVENT_PUBLISH_A1_TIMED_OUT,
 
     EVENT_PUBLISH_BATTERY_SUCCESS,
     EVENT_PUBLISH_BATTERY_FAIL,
@@ -89,6 +98,12 @@ typedef struct stTransition_Entry
     void (*m_action)();
 } Transition_Entry;
 
+/*
+*   \brief Fires an event that is checked against the transition table
+*          and if the current state and the event matches, the state machine
+*          will change state and an action will be called.
+*
+*/
 void FireEvent(Event event);
 
 #endif // !STATE_MACHINE__H

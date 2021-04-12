@@ -3,10 +3,10 @@
 
 #include <Arduino.h>
 
-#define WIFI_STATION_POWER_UP_RESPONSE_TRACKER 0
-
 #define COMMAND_TIME_OUT_SECODNS 8
 #define STATION_MEASURE_INTERVAL_SECONDS 15 * 60
+
+#define CAPACITIVE_SENSORTS_CHARGE_TIME_SECONDS 15
 
 #define ERROR_STATION_BOOT_ERROR -1
 #define ERROR_STATION_FILE_CONFIG_INIT -2
@@ -22,9 +22,12 @@
 #define LED_3 5
 #define LED_4 6
 
+#define SENSORS_POWER_PIN 10
+
 #define PIN_STATION_CH_EN 11
 
 #define MOISTURE_SENSOR_1_PIN A0
+#define MOISTURE_SENSOR_2_PIN A1
 
 const int arInputPins[] =
 {
@@ -39,9 +42,11 @@ const int arOutputPins[] =
     LED_3,
     LED_4,
     PIN_STATION_CH_EN,
+    SENSORS_POWER_PIN,
 };
 
 #define MQTT_A0_TOPIC "Outside_Level_0/A0"
+#define MQTT_A1_TOPIC "Outside_Level_0/A1"
 #define MQTT_BATTER_TOPIC "Outside_Level_0/Battery"
 #define MQTT_MEASURE_INTERVAL_TOPIC "Outside_Level_0/MeasureInterval"
 

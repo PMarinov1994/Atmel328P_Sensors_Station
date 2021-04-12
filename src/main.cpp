@@ -17,7 +17,10 @@ void setup()
         pinMode(arInputPins[i], INPUT);
     
     for (unsigned int i = 0; i < sizeof(arOutputPins) / sizeof(arOutputPins[0]); i++)
+    {
         pinMode(arOutputPins[i], OUTPUT);
+        digitalWrite(arOutputPins[i], LOW);
+    }
 }
 
 void loop()

@@ -3,6 +3,15 @@
 #include "StationInfo.h"
 #include <GlobalDefines.h>
 
+#define CAP_SOIL_SENSOR_MIN_VOLTAGE 3300
+#define CAP_SOIL_SENSOR_MAX_VOLTAGE 5000
+
+#define CAP_SOIL_SENSOR_DRY_READ_MIN 1256
+#define CAP_SOIL_SENSOR_DRY_READ_MAX 1895
+
+#define CAP_SOIL_SENSOR_WET_READ_MIN 2953
+#define CAP_SOIL_SENSOR_WET_READ_MAX 4447
+
 CCapSoilSensor::CCapSoilSensor()
 {
 };
@@ -58,8 +67,11 @@ long CCapSoilSensor::ReadSensor(int pin)
     if (pin < A0 || pin > A7)
         return 0;
 
+    if (pin >= 14) 
+        pin -= 14; // allow for channel or pin numbers
+
     // 23.9.1   ADMUX – ADC Multiplexer Selection Register
-    ADMUX = _BV(REFS0) | _BV(pin & 0x07); // AVcc with external capacitor at AREF pin
+    ADMUX = _BV(REFS0) | (pin & 0x07); // AVcc with external capacitor at AREF pin
 
     delay(2);            // Wait for Vref to settle
     ADCSRA |= _BV(ADSC); // Start conversion

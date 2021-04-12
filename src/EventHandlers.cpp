@@ -12,7 +12,31 @@
 #include <CommandTimeoutTracker.h>
 
 unsigned short usA0_Value = 0;
+unsigned short usA1_Value = 0;
 double dBatteryLevel = 0;
+
+void PowerDown(int seconds)
+{
+    Serial.flush();
+
+    int sleep = seconds / 8;
+    for (int i = 0; i < sleep; i++)
+        LowPower.powerDown(SLEEP_8S, ADC_ON, BOD_ON);
+
+    sleep = seconds % 8;
+    for (int i = 0; i < sleep; i++)
+        LowPower.powerDown(SLEEP_1S, ADC_ON, BOD_ON);
+}
+
+void ChargeUpSensors()
+{
+    DEBUG_PRINT_LN("ChargeUpSensors()");
+
+    digitalWrite(SENSORS_POWER_PIN, HIGH);
+    PowerDown(CAPACITIVE_SENSORTS_CHARGE_TIME_SECONDS);
+
+    FireEvent(EVENT_CHARGING_CAPASITIVE_PROBES_DONE);
+}
 
 void ReadSensorData()
 {
@@ -20,6 +44,8 @@ void ReadSensorData()
 
     CCapSoilSensor cSensor;
     usA0_Value = cSensor.ReadSensorHumidity(MOISTURE_SENSOR_1_PIN);
+    delay(20);
+    usA1_Value = cSensor.ReadSensorHumidity(MOISTURE_SENSOR_2_PIN);
 
     CStationInfo cStation;
     dBatteryLevel = (cStation.ReadSupplyVoltage() / 1000.0) + 0.005;
@@ -27,16 +53,20 @@ void ReadSensorData()
     DEBUG_PRINT("ReadSensorData() -> A0: ");
     DEBUG_PRINT(usA0_Value);
 
+    DEBUG_PRINT("ReadSensorData() -> A1: ");
+    DEBUG_PRINT(usA1_Value);
+
     DEBUG_PRINT(" | Battery: ");
     DEBUG_PRINT_LN(dBatteryLevel);
 
+    digitalWrite(SENSORS_POWER_PIN, LOW);
     FireEvent(EVENT_MEASURE_DONE);
 };
 
 void PowerUpStation()
 {
     DEBUG_PRINT("PowerUpStation()");
-    TrackCommand(WIFI_STATION_POWER_UP_RESPONSE_TRACKER);
+    TrackCommand(INIT_DONE_ID);
     digitalWrite(PIN_STATION_CH_EN, HIGH);
 };
 
@@ -73,6 +103,23 @@ void PublishA0()
 
     int size = sizeof(args) / sizeof(args[0]);
     gCommandParser.SendCommand(COMMAND_HANDLER_PUBLISH_A0_ID, CMD_MQTT_PUBLISH, (char**)&args, size);
+};
+
+void PublishA1()
+{
+    DEBUG_PRINT("PublishA1()");
+
+    String strA1(usA1_Value);
+    const char* args[] =
+    {
+        CMD_MQTT_PUBLISH_TOPIC_ARG,
+        MQTT_A1_TOPIC,
+        CMD_MQTT_PUBLISH_MESSAGE_ARG,
+        strA1.c_str()
+    };
+
+    int size = sizeof(args) / sizeof(args[0]);
+    gCommandParser.SendCommand(COMMAND_HANDLER_PUBLISH_A1_ID, CMD_MQTT_PUBLISH, (char**)&args, size);
 };
 
 void PublishBatteryLevel()
@@ -136,14 +183,7 @@ void EnterPowerSaveMode()
     digitalWrite(LED_BUILTIN, LOW);
     ClearInfo();
 
-    int sleep = STATION_MEASURE_INTERVAL_SECONDS / 8;
-    for (int i = 0; i < sleep; i++)
-        LowPower.powerDown(SLEEP_8S, ADC_ON, BOD_ON);
-
-    sleep = STATION_MEASURE_INTERVAL_SECONDS % 8;
-    for (int i = 0; i < sleep; i++)
-        LowPower.powerDown(SLEEP_1S, ADC_ON, BOD_ON);
-
+    PowerDown(STATION_MEASURE_INTERVAL_SECONDS);
     FireEvent(EVENT_POWER_SAVE_MODE_OVER);
 };
 

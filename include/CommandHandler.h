@@ -12,6 +12,7 @@
 #define COMMAND_HANDLER_PUBLISH_MEASURE_INTERVAL       6
 #define COMMAND_HANDLER_DISCONNECT_MQTT_ID             7
 #define COMMAND_HADNLER_DISCONNECT_WIFI_ID             8
+#define COMMAND_HANDLER_PUBLISH_A1_ID                  9
 
 void HandleCommand(tzCommandResponse * cmd);
 

@@ -4,6 +4,7 @@
 #include <StateMachine.h>
 #include <CommandHandler.h>
 #include <LEDController.h>
+#include <CommDefinitions.h>
 
 struct stTracker
 {
@@ -24,7 +25,7 @@ typedef struct stCmdEventTimeoutEntry CmdEventTimeoutEntry;
 
 static CmdEventTimeoutEntry gMapCmdToEventTimeout[] =
 {
-    { WIFI_STATION_POWER_UP_RESPONSE_TRACKER, EVENT_POWER_UP_STATION_TIMED_OUT, ERROR_STATION_BOOT_ERROR },
+    { INIT_DONE_ID, EVENT_POWER_UP_STATION_TIMED_OUT, ERROR_STATION_BOOT_ERROR },
     { COMMAND_HANDLER_STATION_INIT_CONFIG, EVENT_INIT_STATION_CONFIG_TIMED_OUT, ERROR_STATION_FILE_CONFIG_INIT },
     { COMMAND_HANDLER_INIT_WIFI_ID, EVENT_WIFI_CONNECT_TIMED_OUT, ERROR_STATION_WIFI_CONNECT },
     { COMMAND_HANDLER_INIT_MQTT_ID, EVENT_MQTT_CONNECT_TIMED_OUT, ERROR_STATION_MQTT_CONNECT },
@@ -66,6 +67,9 @@ void TickCommandTracker()
 
 void TrackCommand(unsigned short id)
 {
+    if (gbIsTracking)
+        return;
+
     gCmdTracked.iCmdId = id;
     gCmdTracked.usEndTime = millis() + (COMMAND_TIME_OUT_SECODNS * 1000);
 
