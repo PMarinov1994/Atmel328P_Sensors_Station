@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <CommDefinitions.h>
 #include <GlobalDefines.h>
+#include <CommandTimeoutTracker.h>
 
 CComandParser gCommandParser;
 
@@ -38,7 +39,9 @@ void CComandParser::SendCommand(
 
     cmd += MESSAGE_END;
 
+    TrackCommand(usCommand);
     Serial.println(cmd);
+    Serial.flush();
 }
 
 /*

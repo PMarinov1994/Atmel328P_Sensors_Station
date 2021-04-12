@@ -2,6 +2,7 @@
 #include <StateMachine.h>
 #include <TransitionTable.h>
 #include <GlobalDefines.h>
+#include <LEDController.h>
 
 State gCurrentState = STATE_IDLE;
 
@@ -21,6 +22,8 @@ void FireEvent(Event event)
             DEBUG_PRINT_LN(gTransitionEntries[i].m_to);
 
             gCurrentState = gTransitionEntries[i].m_to;
+            ShowInfo(gCurrentState);
+
             gTransitionEntries[i].m_action();
             break;
         }

@@ -8,12 +8,16 @@
 #include <CommDefinitions.h>
 #include <CommandHandler.h>
 #include <LowPower.h>
+#include <LEDController.h>
+#include <CommandTimeoutTracker.h>
 
 unsigned short usA0_Value = 0;
 double dBatteryLevel = 0;
 
 void ReadSensorData()
 {
+    digitalWrite(LED_BUILTIN, HIGH);
+
     CCapSoilSensor cSensor;
     usA0_Value = cSensor.ReadSensorHumidity(MOISTURE_SENSOR_1_PIN);
 
@@ -32,8 +36,8 @@ void ReadSensorData()
 void PowerUpStation()
 {
     DEBUG_PRINT("PowerUpStation()");
+    TrackCommand(WIFI_STATION_POWER_UP_RESPONSE_TRACKER);
     digitalWrite(PIN_STATION_CH_EN, HIGH);
-    digitalWrite(PIN_STATION_POWER, HIGH);
 };
 
 void InitStationConfig()
@@ -121,7 +125,6 @@ void PowerDownStation()
 {
     DEBUG_PRINT("PowerDownStation()");
     digitalWrite(PIN_STATION_CH_EN, LOW);
-    digitalWrite(PIN_STATION_POWER, LOW);
 
     FireEvent(EVENT_POWER_DOWN_STATION_DONE);
 };
@@ -129,7 +132,9 @@ void PowerDownStation()
 void EnterPowerSaveMode()
 {
     DEBUG_PRINT("PowerDownStation()");
+    
     digitalWrite(LED_BUILTIN, LOW);
+    ClearInfo();
 
     int sleep = STATION_MEASURE_INTERVAL_SECONDS / 8;
     for (int i = 0; i < sleep; i++)
@@ -139,12 +144,12 @@ void EnterPowerSaveMode()
     for (int i = 0; i < sleep; i++)
         LowPower.powerDown(SLEEP_1S, ADC_ON, BOD_ON);
 
-    digitalWrite(LED_BUILTIN, HIGH);
     FireEvent(EVENT_POWER_SAVE_MODE_OVER);
 };
 
 void Idle()
 {
     DEBUG_PRINT("Idle()");
+    ResetErrors();
     FireEvent(EVENT_EXIT_IDLE);
 };

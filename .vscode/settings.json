@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "eventhandlers.h": "c"
+        "eventhandlers.h": "c",
+        "globaldefines.h": "c"
     }
 }

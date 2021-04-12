@@ -1,32 +1,43 @@
 #ifndef GLOBAL_DEFINES__H
 #define GLOBAL_DEFINES__H
 
+#include <Arduino.h>
+
+#define WIFI_STATION_POWER_UP_RESPONSE_TRACKER 0
+
+#define COMMAND_TIME_OUT_SECODNS 8
 #define STATION_MEASURE_INTERVAL_SECONDS 15 * 60
 
-#define LED_STATION_INIT_ERROR 2
-#define LED_WIFI_INIT_ERROR 3
-#define LED_MQTT_INIT_ERROR 4
-#define LED_PUBLISH_ERROR 5
-#define LED_STATION_CONFIG_INIT_ERROR 6
+#define ERROR_STATION_BOOT_ERROR -1
+#define ERROR_STATION_FILE_CONFIG_INIT -2
+#define ERROR_STATION_WIFI_CONNECT -3
+#define ERROR_STATION_MQTT_CONNECT -4
+#define ERROR_STATION_MQTT_PUBLISH -5
+#define ERROR_STATION_MQTT_DISCONNECT -6
+#define ERROR_STATION_WIFI_DISCONNECT -7
 
-#define PIN_STATION_POWER 10
+#define LED_0 2
+#define LED_1 3
+#define LED_2 4
+#define LED_3 5
+#define LED_4 6
+
 #define PIN_STATION_CH_EN 11
 
 #define MOISTURE_SENSOR_1_PIN A0
 
 const int arInputPins[] =
 {
-    MOISTURE_SENSOR_1_PIN,
+    MOISTURE_SENSOR_1_PIN
 };
 
 const int arOutputPins[] =
 {
-    LED_STATION_INIT_ERROR,
-    LED_WIFI_INIT_ERROR,
-    LED_MQTT_INIT_ERROR,
-    LED_PUBLISH_ERROR,
-    LED_STATION_CONFIG_INIT_ERROR,
-    PIN_STATION_POWER,
+    LED_0,
+    LED_1,
+    LED_2,
+    LED_3,
+    LED_4,
     PIN_STATION_CH_EN,
 };
 
@@ -35,7 +46,7 @@ const int arOutputPins[] =
 #define MQTT_MEASURE_INTERVAL_TOPIC "Outside_Level_0/MeasureInterval"
 
 // Real Global Definitions
-#define PRINT_LINES 0
+#define PRINT_LINES 1
 
 #if (PRINT_LINES == 1)
 #define DEBUG_PRINT(x) Serial.print(x)
